@@ -25,6 +25,7 @@ jWidget.prototype.callPhoto=function(obj){
 
 	var arImg=new Array();
 	jW.jp("uploadlist.html","",function(str){
+		str=str.split("\n").join("<br />");
 		var ar=eval(str);
 		ar.trav(function(d,n){
 			var title=d[2], dsc=d[3];
