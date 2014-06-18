@@ -1,0 +1,18 @@
+<?php
+	$con = mysql_connect("localhost","rossypp","db8899");
+	mysql_select_db("rossypp", $con);
+	mysql_query("set names utf8");
+	$result=mysql_query("select * from upload order by id desc;");
+	echo("[");
+	$cnt=0;
+	while($row=mysql_fetch_array($result)){
+		if($cnt==0) echo("[");
+		else echo(",[");
+		for($i=0;$i<5;$i++){
+			echo("'".$row[$i]."',");
+		}
+		echo("]");
+		$cnt++;
+	}
+	echo("]");
+?>

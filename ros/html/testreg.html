@@ -1,0 +1,11 @@
+<?php
+
+	require("regClass.html");
+
+	$jdb=new JDB("localhost","rossypp","db8899","rossypp");
+	$cols="stat,kind,title,cont";
+	$tbl="gboard";
+	$cond="where kind='ros_undercon'";
+
+	$jdb->trav($cols,$tbl,$cond);
+?>

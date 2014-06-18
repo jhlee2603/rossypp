@@ -1,0 +1,28 @@
+<?php
+	
+	$me=new JDB("localhost","rossypp","db8899");
+	$rs=$me->select("gboard","");
+	$me->trav($rs);
+
+
+	class JDB{
+		var $con;
+		function JDB($a,$b,$c){
+			$this->con=mysql_connect($a,$b,$c);
+			mysql_select_db("rossypp", $this->con);
+			mysql_query("set names utf8");
+			echo $this->con;
+		}
+		function select($a,$b){
+			$str="select * from ".$a." ".$b;
+			echo($str);
+			$result=mysql_query($str);
+			return $result;
+		}
+		function trav($a){
+			$row=mysql_fetch_array($a);
+			echo sizeof($row.length);
+		}
+	}
+
+?>

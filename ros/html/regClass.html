@@ -1,0 +1,46 @@
+<?php
+class JDB{
+	var $con;
+	var $query;
+	function JDB($a,$b,$c,$d){
+		$this->con=mysql_connect($a,$b,$c);
+		mysql_select_db($d, $this->con);
+		mysql_query("set names utf8");
+	}
+	function select($a,$b,$c){
+		$str="select ".$a." from ".$b." ".$c;
+		$result=mysql_query($str);
+		return $result;
+	}
+	function insert($a,$b){
+		$max=$this->getMax($a)+1;
+		$str="insert into ".$a." values(".$max.",".$b.");";
+		mysql_query($str);
+	}
+	function getMax($a){
+		$result=mysql_query("select max(id) from ".$a.";");
+		$row=mysql_fetch_array($result);
+		return $row[0];
+	}
+	function rowCount($a,$b,$c){
+		$str="select count(*)  from ".$b." ".$c.";";
+		$rs=mysql_query($str);
+		$row=mysql_fetch_array($rs);
+		return $row[0];
+	}
+	function trav($a,$b,$c){
+		$lng=$this->rowCount($a,$b,$c);
+		$rs=$this->select($a,$b,$c);
+		$ncol=0;
+		while($row=mysql_fetch_array($rs)){
+			if($ncol==0){
+				$ncol=count($row)/2;
+			}
+			for($i=0;$i<$ncol;$i++){
+				echo($row[$i]."§cñ");
+			}
+			echo("§rñ");
+		}
+	}
+}
+?>

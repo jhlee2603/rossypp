@@ -1,0 +1,1 @@
+cat jWidget_0.js jWidget_1.js  jWidget_musicplayer.js jWidget_photo.js jWidget_upload.js > jWidget.js

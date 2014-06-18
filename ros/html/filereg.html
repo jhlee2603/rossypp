@@ -1,0 +1,97 @@
+﻿<?php
+
+	require("regClass.html");
+
+	//ip address, time...
+	$ip=$_SERVER["REMOTE_ADDR"];
+	$time=date('Y').date('m').date('d').date('H').date('i').date('s').date('w');
+
+	//connected_info...
+	$connected_table="ros_ART WORK";
+	$connected_writer="Rossy";
+	$connected_password="8899";
+	
+	//params from client...
+	$boardname=$_POST["boardname"];
+	$boardid=$_POST["boardid"];
+	$nth=$_POST["nth"];
+	$ext=$_POST["ext"];
+	$cont=$_POST["cont"];
+	$title=$_POST["title"];
+	
+	/*
+	echo("\n\n");
+	echo "\n";
+	echo $file."\n";
+	echo $file_name."\n";
+	echo round($file_size/1000)." Kbyte\n";
+	echo $file_type."\n";
+	*/
+
+	//이미지가 아니면 정보가 안나온다
+	//gd설치안해도 사용가능한 함수
+
+	$img_info=getimagesize($file);
+	
+	/*
+	echo $img_info[0]."\n";//가로크기
+	echo $img_info[1]."\n";//세로크기
+	echo $img_info[2]."\n";//이미지형식 1-gif, 2-jpg, 3-png, 4-swf, 5-psd, 6-bmp
+	*/
+	
+	
+	if(!is_uploaded_file($file)){//post형식으로 전달된 임시파일명인지 검사한다.
+		echo "정상적이지 않은 파일"; 
+		//MsgViewHref("정상적이지 않은 파일입니다..","test.php"); 
+		return;//뒤에 명령어 실행 안됨 
+	}
+
+	if(eregi(".inc$|.aaa$",$file_name)){//확장자 체크를 합니다.
+		echo "정상적이지 않은 파일";
+		//MsgViewHref("승인되지 않은 확장자입니다.","test.php");
+		return;//뒤에 명령어 실행 안됨
+	}
+	
+	
+	$filename="../img/upload/".$boardname."_".$boardid."_".$nth.".".$ext;
+	$justname=$boardname."_".$boardid."_".$nth.".".$ext;
+	
+
+	if(copy($file, $filename)){
+		//copy명령을 이용해 임시파일명에서 실제 파일명으로 복사한다.
+		//임시파일명을 수동으로 지워야 한다.
+		echo $filename;
+		if(unlink($file)){
+			//echo "임시파일삭제";
+		}
+		//원도우에서는 작동하지 않습니다.
+	}
+
+
+	//thumbnail 
+	if($img_info[2]==1)
+		$origin=imagecreatefromgif($filename);
+	else if($img_info[2]==2)
+		$origin=imagecreatefromjpeg($filename);
+	else if($img_info[2]==3)
+		$origin=imagecreatefrompng($filename);
+	else if($img_info[2]==6)
+		$origin=imagecreatefrombmp($filename);
+	else
+		$origin=imagecreatefromgif($filename);
+
+	$rate=$img_info[1]/$img_info[0];
+	$thumb=imagecreatetruecolor(266,266*$rate);
+	imagecopyresampled($thumb,$origin,0,0,0,0,266,266*$rate,$img_info[0],$img_info[1]);
+
+
+	imagegif($thumb,"../img/upload/thumbnail/".$boardname."_".$boardid."_".$nth.".".$ext);
+
+	$jdb=new JDB("localhost","rossypp","db8899","rossypp");
+	
+	$jdb->insert("upload","'$justname','$title','$cont','$ip'");
+	$tag="<img src=\'http://www.rossypp.com/ros/img/upload/thumbnail/$justname\' />\n\n";
+	$tagcont=$tag.$cont;
+
+	$jdb->insert("gboard","0,'$connected_table','$connected_writer','$title','$tagcont','$connected_password','$ip','$time',0");
+?>
